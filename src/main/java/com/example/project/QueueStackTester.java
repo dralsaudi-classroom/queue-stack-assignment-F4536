@@ -1,31 +1,83 @@
 package com.example.project;
 
 public class QueueStackTester {
-    public static <T> void split(Queue<T> q, Queue<T> oq, Queue<T> eq)
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-        // Write the recursive static method split that splits a queue of n elements into two
-        // queues. The elements with odd orders (i.e. 1st, 3rd, 5th ...) should be put in the
-        // first queue and elements with even orders (i.e. 2nd, 4th, 6th ...) should be put in
-        // the second queue. The original queue should remain unchanged at the end of the
-        // method.
-        // Example. Given the queue (A, B, C, D, E), split results in oq (A, C, E), and eq(B, D).
+   public static <T> void split(Queue<T> q, Queue<T> oq, Queue<T> eq) {
+    // Call the helper method with an initial position counter (1 for the first element)
+    splitHelper(q, oq, eq, 1);
+}
+
+private static <T> void splitHelper(Queue<T> q, Queue<T> oq, Queue<T> eq, int position) {
+    // Base case: If the queue is empty, return
+    if (q.isEmpty()) {
+        return;
     }
-    public static <T> void remove(LinkedPQ<T> pq, int p)
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-        // Write a static method remove that removes every element in the priority queue
-        // having priority less than p.
-        // Example. Given pq: [A, 10], [D, 8], [B, 5], [E, 3], [C, 2] remove(pq, 5) results in
-        // pq: [A, 10], [D, 8], [B, 5].
+
+    // Dequeue the front element
+    T element = q.poll();
+
+    // Place element in odd queue (oq) or even queue (eq) based on position
+    if (position % 2 != 0) {
+        oq.add(element); // Odd position, add to oq
+    } else {
+        eq.add(element); // Even position, add to eq
     }
-    public static <T> boolean search(Stack<T> st, T e)
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-        // Write the recursive static method search that searches for an element e in a stack st
-        // and returns true if it’s found or false otherwise. st should not change at the end of
-        // the method. You are not allowed to use any auxiliary data structures.
-        // Example. Given the stack st (top-to-bottom): 5, 7, 5, 3, 2. search(st, 3) returns
-        // true while search(st, 1) returns false.
+
+    // Recur for the next element
+    splitHelper(q, oq, eq, position + 1);
+
+    // Re-enqueue the element to the original queue to restore its state
+    q.add(element);
+}
+
     }
+   public static <T> void remove(LinkedPQ<T> pq, int p) {
+    Node<T> current = pq.head;
+    Node<T> previous = null;
+
+    while (current != null) {
+        // Check if the current node's priority is less than p
+        if (current.priority < p) {
+            if (previous == null) {
+                // If removing the head element
+                pq.head = current.next;
+            } else {
+                // Skip the current node
+                previous.next = current.next;
+            }
+            // Move to the next node
+            current = current.next;
+        } else {
+            // Move to the next node, keeping track of previous
+            previous = current;
+            current = current.next;
+        }
+    }
+}
+
+    }
+ public static <T> boolean search(Stack<T> st, T e) {
+    // Base case: If the stack is empty, the element is not found
+    if (st.isEmpty()) {
+        return false;
+    }
+
+    // Pop the top element to inspect it
+    T topElement = st.pop();
+
+    // If the top element is the one we are looking for, return true
+    if (topElement.equals(e)) {
+        // Push the element back before returning to keep the stack unchanged
+        st.push(topElement);
+        return true;
+    }
+
+    // Recursively search in the rest of the stack
+    boolean found = search(st, e);
+
+    // Push the element back to restore the original stack state
+    st.push(topElement);
+
+    return found;
+}
+
 }
